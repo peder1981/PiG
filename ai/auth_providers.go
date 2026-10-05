@@ -444,7 +444,14 @@ func oauthProviderAuth(providerID string, provider OAuthProviderInterface) *OAut
 		Login:          oauthNativeLogin(provider),
 		Refresh:        oauthRefresh(provider),
 		ToAuth:         oauthToAuth(providerID, provider),
+		store:          oauthCredentialStore(provider),
 	}
+}
+
+// oauthCredentialStore returns the extension-owned credential store an OAuth provider contributes (pig additive (D40)), or nil when its credentials belong in the core store.
+func oauthCredentialStore(provider OAuthProviderInterface) OAuthCredentialStore {
+	store, _ := provider.(OAuthCredentialStore)
+	return store
 }
 
 // builtinAPIKeyAuth mirrors each built-in upstream provider's api-key auth.
@@ -475,7 +482,7 @@ func builtinAPIKeyAuth(providerID string) (*APIKeyAuth, bool) {
 // come from the env-api-keys table.
 var builtinAPIKeyNames = map[string]string{
 	"ant-ling":                   "Ant Ling API key",
-	"azure-openai-responses":     "Azure OpenAI API key",
+	"azure":                      "Azure OpenAI API key",
 	"baseten":                    "Baseten API key",
 	"cerebras":                   "Cerebras API key",
 	"deepseek":                   "DeepSeek API key",
